@@ -1,6 +1,6 @@
+llama-index>=0.10.0
+llama-index-llms-openai
 streamlit
-llama-index
-openai
 pytesseract
 pdf2image
 pypdf

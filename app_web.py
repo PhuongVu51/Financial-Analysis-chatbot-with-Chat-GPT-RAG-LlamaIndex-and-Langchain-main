@@ -84,20 +84,27 @@ if uploaded_files:
     )
 
     # ==========================================
-    # 4. KHỞI TẠO AI AGENT TỰ DO (PURE REACTION)
+    # 4. KHỞI TẠO AI AGENT (CẬP NHẬT PHIÊN BẢN MỚI)
     # ==========================================
     llm = OpenAI(model=model_choice, temperature=0)
+    
+    # Cách khởi tạo an toàn cho mọi phiên bản LlamaIndex
+    from llama_index.core.agent import ReActAgent
+    
     agent = ReActAgent.from_tools(
         tools=[finance_tool], 
         llm=llm, 
-        verbose=True, 
-        context=(
-            "Bạn là một chuyên gia phân tích tài chính cao cấp. "
-            "Nhiệm vụ của bạn là đọc dữ liệu từ công cụ financial_scanner và trả lời câu hỏi. "
-            "Hãy luôn kiểm tra tiêu đề trang và tiêu đề bảng biểu để xác định đúng loại báo cáo. "
-            "Khi trả lời về số liệu, hãy chỉ rõ số liệu đó thuộc về đơn vị nào, thời điểm nào và cột nào (ví dụ: Hợp nhất/Riêng lẻ hoặc Năm nay/Năm trước)."
-        )
+        verbose=True,
+        max_iterations=10 # Thêm giới hạn để tránh Agent chạy vòng lặp vô tận
     )
+    
+    # Thiết lập Context cho Agent (phần này tách riêng để tránh lỗi khởi tạo)
+    agent.update_prompts({"agent_worker:system_prompt": (
+        "Bạn là một chuyên gia phân tích tài chính cao cấp. "
+        "Nhiệm vụ của bạn là đọc dữ liệu từ công cụ financial_scanner và trả lời câu hỏi. "
+        "Hãy luôn kiểm tra tiêu đề trang và tiêu đề bảng biểu để xác định đúng loại báo cáo. "
+        "Khi trả lời về số liệu, hãy chỉ rõ số liệu đó thuộc về đơn vị nào và thời điểm nào."
+    )})
 
     # ==========================================
     # 5. GIAO DIỆN HỘI THOẠI
