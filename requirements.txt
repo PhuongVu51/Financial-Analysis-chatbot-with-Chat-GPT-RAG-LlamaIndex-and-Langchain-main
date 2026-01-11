@@ -1,5 +1,6 @@
 llama-index>=0.10.0
 llama-index-llms-openai
+llama-index-agent-openai
 streamlit
 pytesseract
 pdf2image
