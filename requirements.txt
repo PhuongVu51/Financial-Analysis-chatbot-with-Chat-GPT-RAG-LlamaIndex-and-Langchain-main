@@ -9,3 +9,7 @@ langchain-openai
 pypdf
 streamlit
 pandas
+llama-index
+openai
+pytesseract
+pdf2image
