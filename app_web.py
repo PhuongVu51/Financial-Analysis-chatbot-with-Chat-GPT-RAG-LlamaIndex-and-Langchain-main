@@ -1,121 +1,50 @@
-import streamlit as st
-import os
-import shutil
-import platform
-import pytesseract
+import streamlit as st, os, platform, pytesseract
 from pdf2image import convert_from_path
-import pypdf
 from llama_index.core import VectorStoreIndex, Document
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
-from llama_index.core.agent import ReActAgent
-from llama_index.llms.openai import OpenAI
+from llama_index.agent.openai import OpenAIAgent
+from llama_index.core.prompts import ChatPromptTemplate
 
-# ==========================================
-# 1. CẤU HÌNH GIAO DIỆN & MÔI TRƯỜNG
-# ==========================================
-st.set_page_config(page_title="Universal Financial AI Agent", layout="wide", page_icon="📊")
-
+st.set_page_config(page_title="Universal Financial AI", layout="wide")
 if platform.system() == "Windows":
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-if "OPENAI_API_KEY" in st.secrets:
-    os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
-else:
-    st.error("❌ Thiếu OPENAI_API_KEY trong cấu hình Secrets của Streamlit Cloud!")
-    st.stop()
+os.environ["OPENAI_API_KEY"] = st.secrets.get("OPENAI_API_KEY", "")
 
 st.title("📊 Universal Financial AI Agent")
-st.markdown("---")
 
-# ==========================================
-# 2. THANH SIDEBAR
-# ==========================================
-with st.sidebar:
-    st.header("⚙️ Cấu hình hệ thống")
-    st.write("**Người thực hiện:** Phương Vũ")
-    model_choice = st.selectbox("Chọn mô hình AI:", ["gpt-4o", "gpt-3.5-turbo"])
-    
-    if st.button("🗑️ Làm mới bộ nhớ tạm"):
-        if os.path.exists("temp_dir"):
-            shutil.rmtree("temp_dir")
-            st.success("Đã xóa dữ liệu cũ!")
-            st.rerun()
+up_files = st.file_uploader("Tải báo cáo PDF:", type="pdf", accept_multiple_files=True)
 
-# ==========================================
-# 3. PIPELINE OCR ĐA NĂNG (DPI=400, PSM=1)
-# ==========================================
-uploaded_files = st.file_uploader("Tải lên báo cáo tài chính (PDF):", type="pdf", accept_multiple_files=True)
-
-if uploaded_files:
-    if not os.path.exists("temp_dir"): os.makedirs("temp_dir")
-    
+if up_files:
     all_docs = []
-    with st.spinner("🤖 AI đang tự động nhận diện bố cục và quét dữ liệu..."):
-        for uploaded_file in uploaded_files:
-            file_path = os.path.join("temp_dir", uploaded_file.name)
-            with open(file_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            
-            # Quét trang 1-15 để lấy bảng cân đối và kết quả kinh doanh
-            pages = convert_from_path(file_path, dpi=400, first_page=1, last_page=15)
-            
-            content = ""
-            for i, page in enumerate(pages):
-                # PSM 1 để tự động phân tích bố cục trang bất kỳ
-                page_text = pytesseract.image_to_string(page, lang='vie', config='--psm 1')
-                content += f"\n--- TRANG {i+1} ---\n{page_text}"
-
-            all_docs.append(Document(text=content, metadata={"file_name": uploaded_file.name}))
-
-    index = VectorStoreIndex.from_documents(all_docs)
-    query_engine = index.as_query_engine(similarity_top_k=10)
+    with st.spinner("🤖 Đang quét OCR chất lượng cao (400 DPI)..."):
+        for f in up_files:
+            path = f"temp_{f.name}"
+            with open(path, "wb") as tmp: tmp.write(f.getbuffer())
+            imgs = convert_from_path(path, dpi=400, first_page=1, last_page=15)
+            text = "\n".join([pytesseract.image_to_string(img, lang='vie', config='--psm 1') for img in imgs])
+            all_docs.append(Document(text=text, metadata={"file": f.name}))
     
-    finance_tool = QueryEngineTool(
-        query_engine=query_engine,
-        metadata=ToolMetadata(
-            name="financial_scanner", 
-            description="Truy xuất dữ liệu thô từ báo cáo tài chính được tải lên."
-        )
+    engine = VectorStoreIndex.from_documents(all_docs).as_query_engine(similarity_top_k=10)
+    tool = QueryEngineTool(query_engine=engine, metadata=ToolMetadata(name="scanner", description="Financial Data"))
+    
+    # Khởi tạo Agent và sửa lỗi update_prompts
+    agent = OpenAIAgent.from_tools(tools=[tool], verbose=True)
+    
+    system_msg = (
+        "Bạn là chuyên gia tài chính. Hãy dùng công cụ scanner để tìm số liệu. "
+        "Luôn phân biệt rõ cột 'Hợp nhất' và 'Riêng lẻ'. Trả lời chính xác số liệu tìm được."
     )
+    # Cấu hình Prompt chuẩn để tránh lỗi AttributeError
+    agent.update_prompts({"agent_worker:system_prompt": ChatPromptTemplate.from_str(system_msg)})
 
-    # ==========================================
-    # 4. KHỞI TẠO AI AGENT (REACTION MODE)
-    # ==========================================
-    llm = OpenAI(model=model_choice, temperature=0)
-    
-    # Sử dụng ReActAgent từ phiên bản lõi để tránh lỗi Attribute
-    agent = ReActAgent.from_tools(
-        tools=[finance_tool], 
-        llm=llm, 
-        verbose=True
-    )
-    
-    # Cấu hình system prompt để Agent tự suy luận cột/dòng
-    agent.update_prompts({"agent_worker:system_prompt": (
-        "Bạn là một chuyên gia phân tích tài chính cao cấp. "
-        "Nhiệm vụ của bạn là đọc dữ liệu từ công cụ financial_scanner và trả lời câu hỏi. "
-        "Hãy luôn kiểm tra tiêu đề trang và tiêu đề bảng biểu để xác định đúng loại báo cáo. "
-        "Khi trả lời về số liệu, hãy chỉ rõ số liệu đó thuộc về đơn vị nào (Hợp nhất/Riêng lẻ) và thời điểm nào."
-    )})
-
-    # ==========================================
-    # 5. GIAO DIỆN CHAT
-    # ==========================================
     if "messages" not in st.session_state: st.session_state.messages = []
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]): st.markdown(message["content"])
+    for m in st.session_state.messages: st.chat_message(m["role"]).write(m["content"])
 
-    if prompt := st.chat_input("Nhập câu hỏi tài chính..."):
+    if prompt := st.chat_input("Hỏi về số liệu..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"): st.markdown(prompt)
-
+        st.chat_message("user").write(prompt)
         with st.chat_message("assistant"):
-            with st.spinner("🤖 Agent đang suy luận..."):
-                try:
-                    response = agent.chat(prompt)
-                    st.markdown(response.response)
-                    st.session_state.messages.append({"role": "assistant", "content": response.response})
-                except Exception as e:
-                    st.error(f"Lỗi: {e}")
-else:
-    st.info("👋 Hãy tải báo cáo lên để hệ thống tự động quét OCR.")
+            res = agent.chat(prompt)
+            st.write(str(res))
+            st.session_state.messages.append({"role": "assistant", "content": str(res)})
