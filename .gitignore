@@ -1,0 +1,4 @@
+.streamlit/
+temp_dir/
+__pycache__/
+*.pyc
