@@ -83,20 +83,26 @@ if uploaded_files:
         )
     )
 
+# ==========================================
+    # 4. KHỞI TẠO AI AGENT (SỬA LỖI TRIỆT ĐỂ)
     # ==========================================
-    # 4. KHỞI TẠO AI AGENT TỰ DO (PURE REACTION)
-    # ==========================================
-    llm = OpenAI(model=model_choice, temperature=0)
-    agent = ReActAgent.from_tools(
+    from llama_index.agent.openai import OpenAIAgent
+    from llama_index.core.prompts import ChatPromptTemplate
+
+    # Sử dụng OpenAIAgent để tương thích với bản cloud
+    system_prompt = (
+        "Bạn là một chuyên gia phân tích tài chính cao cấp. "
+        "Nhiệm vụ của bạn là đọc dữ liệu từ công cụ financial_scanner và trả lời câu hỏi. "
+        "Hãy luôn kiểm tra tiêu đề trang và tiêu đề bảng biểu để xác định đúng loại báo cáo. "
+        "Khi trả lời về số liệu, hãy chỉ rõ số liệu đó thuộc về đơn vị nào, thời điểm nào và cột nào."
+    )
+
+    # Khởi tạo Agent với system_prompt trực tiếp để tránh lỗi AttributeError
+    agent = OpenAIAgent.from_tools(
         tools=[finance_tool], 
         llm=llm, 
-        verbose=True, 
-        context=(
-            "Bạn là một chuyên gia phân tích tài chính cao cấp. "
-            "Nhiệm vụ của bạn là đọc dữ liệu từ công cụ financial_scanner và trả lời câu hỏi. "
-            "Hãy luôn kiểm tra tiêu đề trang và tiêu đề bảng biểu để xác định đúng loại báo cáo. "
-            "Khi trả lời về số liệu, hãy chỉ rõ số liệu đó thuộc về đơn vị nào, thời điểm nào và cột nào (ví dụ: Hợp nhất/Riêng lẻ hoặc Năm nay/Năm trước)."
-        )
+        verbose=True,
+        system_prompt=system_prompt
     )
 
     # ==========================================
