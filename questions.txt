@@ -1,0 +1,62 @@
+    Revenue and Sales Trends:
+        Compare and contrast the revenue trends and what factors have influenced them. 
+
+    Debt and Liabilities:
+        Compare and contrast the total debt and its breakdown. How is the company managing its debt obligations?
+
+    Share Repurchases and Dividends
+	Compare and contrast the share repurchases and dividends.
+
+    Cash Flow Analysis:
+        How have the cash flow changed for both companies and what are the key components of operating and investing activities?
+
+    Key Risk Factors:
+        What does the 10-K identify as the primary risk factors for both companies and how do they plan to mitigate these risks?
+
+    Management's Discussion and Analysis (MD&A):
+        What insights and forward-looking information does the MD&A section provide about the financial outlook and strategies?
+
+    Business Segments:
+        Can you explain the performance of the company's different business segments, and are there any standout growth areas?
+
+    Legal Proceedings and Contingencies:
+        Are there any ongoing legal issues or contingencies that could impact the financial health and future operations?
+
+    Audit and Accounting Matters:
+        Were there any significant changes in accounting principles or audit opinions, and if so, what impact do they have on financial statements?
+
+    Related Party Transactions:
+        Does the 10-K disclose any related party transactions, and if so, how are they disclosed and what is the significance to the financials?
+
+1. Nhóm câu hỏi về số liệu tài chính cơ bản
+"Tổng tài sản của Vietcombank tại ngày 30/06/2025 là bao nhiêu và tăng trưởng thế nào so với cuối năm 2024?"
+
+"Lợi nhuận sau thuế trong 6 tháng đầu năm 2025 của ngân hàng đạt con số nào?"
+
+"Vốn điều lệ của Vietcombank đã thay đổi như thế nào tính đến cuối tháng 6 năm 2025?"
+
+2. Nhóm câu hỏi về chất lượng tài sản (Rất quan trọng trong ngân hàng)
+"Tỷ lệ nợ xấu (Nợ nhóm 3, 4, 5) của Vietcombank tại ngày 30/06/2025 là bao nhiêu phần trăm trên tổng dư nợ?"
+
+"Ngân hàng đã trích lập bao nhiêu chi phí dự phòng rủi ro tín dụng trong nửa đầu năm 2025?"
+
+"Cơ cấu cho vay theo thời hạn (ngắn, trung, dài hạn) của ngân hàng đang chuyển dịch ra sao?"
+
+3. Nhóm câu hỏi về hiệu quả hoạt động
+"Thu nhập lãi thuần (NII) của Vietcombank trong kỳ này tăng hay giảm so với cùng kỳ năm trước?"
+
+"Các hoạt động ngoài lãi như kinh doanh ngoại hối và dịch vụ đóng góp bao nhiêu vào tổng thu nhập hoạt động?"
+
+"Lãi cơ bản trên cổ phiếu (EPS) của Vietcombank đạt bao nhiêu trong 6 tháng đầu năm 2025?"
+
+4. Nhóm câu hỏi về quản trị và sự kiện đặc biệt
+"Báo cáo có nhắc đến việc nhận chuyển giao bắt buộc ngân hàng nào không? Tên mới của ngân hàng đó là gì?"
+
+"Vietcombank có những chính sách gì để hỗ trợ khách hàng gặp khó khăn do ảnh hưởng của bão số 3 (Yagi)?"
+
+"Ai là người đại diện theo pháp luật và ký phê duyệt báo cáo tài chính này?"
+
+5. Câu hỏi nâng cao (Kiểm tra khả năng suy luận của Agent)
+"Dựa trên các chỉ số về nợ xấu và dự phòng, hãy nhận xét về mức độ an toàn tài chính của Vietcombank trong nửa đầu năm 2025."
+
+"Nếu tôi là một nhà đầu tư, hãy chỉ ra 3 điểm sáng và 2 điểm rủi ro cần lưu ý trong bản báo cáo tài chính này."
