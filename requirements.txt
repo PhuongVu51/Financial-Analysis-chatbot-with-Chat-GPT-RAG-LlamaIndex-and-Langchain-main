@@ -4,4 +4,3 @@ llama-index-agent-openai
 llama-index-llms-openai
 pytesseract
 pdf2image
-pypdf
