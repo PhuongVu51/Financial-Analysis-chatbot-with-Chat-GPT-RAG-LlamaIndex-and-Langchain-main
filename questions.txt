@@ -59,4 +59,6 @@
 5. Câu hỏi nâng cao (Kiểm tra khả năng suy luận của Agent)
 "Dựa trên các chỉ số về nợ xấu và dự phòng, hãy nhận xét về mức độ an toàn tài chính của Vietcombank trong nửa đầu năm 2025."
 
-"Nếu tôi là một nhà đầu tư, hãy chỉ ra 3 điểm sáng và 2 điểm rủi ro cần lưu ý trong bản báo cáo tài chính này."
+"Nếu tôi là một nhà đầu tư, hãy chỉ ra 3 điểm sáng và 2 điểm rủi ro cần lưu ý trong bản báo cáo tài chính này.
+
+Dựa trên báo cáo Vietcombank, cho biết con số Tổng cộng tài sản hợp nhất tại ngày 30/06/2025 là bao nhiêu?
